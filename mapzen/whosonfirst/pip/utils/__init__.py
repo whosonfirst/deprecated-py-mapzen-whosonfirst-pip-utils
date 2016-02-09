@@ -7,10 +7,15 @@ import shapely.geometry
 import logging
 
 def append_hierarchy_and_parent_pip(feature, **kwargs):
+    return append_hierarchy_and_parent(feature, **kwargs)
+
+def append_hierarchy_and_parent(feature, **kwargs):
 
     props = feature['properties']
     placetype = props['wof:placetype']
-    
+
+    wofid = props['wof:id']
+
     lat = props.get('lbl:latitude', None)
     lon = props.get('lbl:longitude', None)
     
@@ -60,6 +65,8 @@ def append_hierarchy_and_parent_pip(feature, **kwargs):
         ph = pp['wof:hierarchy']
             
         for h in ph:
+
+            h[ "%s_id" % placetype ] = wofid
 
             # k = "%s_id" % placetype
             # h[k] = wofid
