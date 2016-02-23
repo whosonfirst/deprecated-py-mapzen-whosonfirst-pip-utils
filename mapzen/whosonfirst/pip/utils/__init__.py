@@ -70,18 +70,15 @@ def append_hierarchy_and_parent(feature, **kwargs):
             # h[k] = wofid
             _hiers.append(h)
 
+    parent_id = -1
+
     if len(_rsp) == 0:
         logging.warning("Failed to reverse geocode any parents for %s, %s" % (lat, lon))
-        return False
-
-    if len(_rsp) > 1:  
+    elif len(_rsp) > 1:  
         logging.warning("Multiple reverse geocoding possibilities %s, %s" % (lat, lon))
-        return False
+    else:
+        parent_id = _rsp[0]['Id']
 
-    if len(_hiers) == 0:
-        return True
-
-    parent_id = _rsp[0]['Id']
     props['wof:parent_id'] = parent_id
     
     props['wof:hierarchy'] = _hiers
