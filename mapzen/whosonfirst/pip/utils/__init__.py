@@ -41,7 +41,7 @@ def append_hierarchy_and_parent(feature, **kwargs):
 def get_reverse_geocoded(lat, lon, placetype):
 
     # see also : https://github.com/whosonfirst/go-whosonfirst-pip#wof-pip-server
-    pip = mapzen.whosonfirst.pip.proxy(hostname='pip.mapzen.com')
+    pip = mapzen.whosonfirst.pip.server(hostname='pip.mapzen.com')
 
     pt = mapzen.whosonfirst.placetypes.placetype(placetype)
 
@@ -58,7 +58,7 @@ def get_reverse_geocoded(lat, lon, placetype):
         # print "%s : %s,%s" % (parent, lat, lon)
 
         try:
-            rsp = pip.reverse_geocode(parent, lat, lon)
+            rsp = pip.reverse_geocode(lat, lon, parent)
         except Exception, e:
             logging.warning("failed to reverse geocode %s @%s,%s" % (parent, lat, lon))
             continue
