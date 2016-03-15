@@ -5,6 +5,9 @@ import mapzen.whosonfirst.pip
 import mapzen.whosonfirst.placetypes
 import shapely.geometry
 import logging
+import requests
+import json
+from mapzen.whosonfirst.utils import id2relpath
 
 def append_hierarchy_and_parent_pip(feature, **kwargs):
     return append_hierarchy_and_parent(feature, **kwargs)
@@ -41,7 +44,7 @@ def append_hierarchy_and_parent(feature, **kwargs):
 def get_reverse_geocoded(lat, lon, placetype):
 
     # see also : https://github.com/whosonfirst/go-whosonfirst-pip#wof-pip-server
-    pip = mapzen.whosonfirst.pip.server(hostname='pip.mapzen.com')
+    pip = mapzen.whosonfirst.pip.server(hostname='pip.mapzen.com', scheme='https', port=443)
 
     pt = mapzen.whosonfirst.placetypes.placetype(placetype)
 
@@ -84,6 +87,8 @@ def get_parent(reverse_geocoded, lat, lon):
 
 def get_hierarchy(reverse_geocoded, data_endpoint):
 
+    _hiers = []
+
     for r in reverse_geocoded:
         id = r['Id']
         #pf = mapzen.whosonfirst.utils.load(kwargs.get('data_root', ''), id)
@@ -91,10 +96,11 @@ def get_hierarchy(reverse_geocoded, data_endpoint):
         pf = json.loads(rsp.content)
         pp = pf['properties']
         ph = pp['wof:hierarchy']
+        placetype = pp['wof:placetype']
 
         for h in ph:
 
-            h[ "%s_id" % placetype ] = wofid
+            h[ "%s_id" % placetype ] = id
 
             # k = "%s_id" % placetype
             # h[k] = wofid
