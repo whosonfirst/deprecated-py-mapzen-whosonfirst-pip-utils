@@ -56,6 +56,8 @@ def append_hierarchy_and_parent(feature, **kwargs):
             _rsp = rsp
             break
 
+    wofid = props.get('wof:id', None)
+
     for r in _rsp:
         id = r['Id']
         pf = mapzen.whosonfirst.utils.load(kwargs.get('data_root', ''), id)
@@ -64,7 +66,8 @@ def append_hierarchy_and_parent(feature, **kwargs):
             
         for h in ph:
 
-            h[ "%s_id" % placetype ] = wofid
+            if wofid:
+                h[ "%s_id" % placetype ] = wofid
 
             # k = "%s_id" % placetype
             # h[k] = wofid
