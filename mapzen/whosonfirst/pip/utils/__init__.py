@@ -72,23 +72,6 @@ def append_hierarchy_and_parent(feature, **kwargs):
     placetype = props['wof:placetype']
 
     lat, lon = reverse_geocoordinates(feature)
-
-    """
-    lat = props.get('lbl:latitude', None)
-    lon = props.get('lbl:longitude', None)
-    
-    if not lat or not lon:
-        lat = props.get('geom:latitude', None)
-        lon = props.get('geom:longitude', None)
-        
-    if not lat or not lon:
-
-        shp = shapely.geometry.asShape(feature['geometry'])
-        coords = shp.centroid
-        
-        lat = coords.y
-        lon = coords.x
-    """
  
     # see also : https://github.com/whosonfirst/go-whosonfirst-pip#wof-pip-server
     pip = mapzen.whosonfirst.pip.proxy()
