@@ -6,13 +6,9 @@ import mapzen.whosonfirst.placetypes
 import shapely.geometry
 import logging
 
-def append_hierarchy_and_parent_pip(feature, **kwargs):
-    return append_hierarchy_and_parent(feature, **kwargs)
-
-def append_hierarchy_and_parent(feature, **kwargs):
+def reverse_geocoordinates(feature):
 
     props = feature['properties']
-    placetype = props['wof:placetype']
 
     lat = props.get('lbl:latitude', None)
     lon = props.get('lbl:longitude', None)
@@ -28,7 +24,72 @@ def append_hierarchy_and_parent(feature, **kwargs):
         
         lat = coords.y
         lon = coords.x
+
+    return lat, lon
+
+# please rename me
+# test with 18.48361, -77.53057
+
+def whereami(feature, **kwargs):
+
+    lat, lon = reverse_geocoordinates(feature)    
+
+    props = feature['properties']
+    placetype = props['wof:placetype']
+
+    # see also : https://github.com/whosonfirst/go-whosonfirst-pip#wof-pip-server
+    pip = mapzen.whosonfirst.pip.proxy()
+
+    pt = mapzen.whosonfirst.placetypes.placetype(placetype)
+
+    for ancestor in pt.ancestors():
+
+        ancestor = str(ancestor)
+
+        # TO DO: some kind of 'ping' to make sure the server is actually
+        # there... (20151221/thisisaaronland)
         
+        # print "%s : %s,%s" % (parent, lat, lon)
+
+        try:
+            rsp = pip.reverse_geocode(ancestor, lat, lon)
+        except Exception, e:
+            logging.warning("failed to reverse geocode %s @%s,%s" % (parent, lat, lon))
+            continue
+
+        if len(rsp):
+            _rsp = rsp
+            break
+
+        pass
+
+def append_hierarchy_and_parent_pip(feature, **kwargs):
+    return append_hierarchy_and_parent(feature, **kwargs)
+
+def append_hierarchy_and_parent(feature, **kwargs):
+
+    props = feature['properties']
+    placetype = props['wof:placetype']
+
+    lat, lon = reverse_geocoordinates(feature)
+
+    """
+    lat = props.get('lbl:latitude', None)
+    lon = props.get('lbl:longitude', None)
+    
+    if not lat or not lon:
+        lat = props.get('geom:latitude', None)
+        lon = props.get('geom:longitude', None)
+        
+    if not lat or not lon:
+
+        shp = shapely.geometry.asShape(feature['geometry'])
+        coords = shp.centroid
+        
+        lat = coords.y
+        lon = coords.x
+    """
+ 
     # see also : https://github.com/whosonfirst/go-whosonfirst-pip#wof-pip-server
     pip = mapzen.whosonfirst.pip.proxy()
 
