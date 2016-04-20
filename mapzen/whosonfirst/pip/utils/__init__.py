@@ -88,7 +88,7 @@ def append_hierarchy_and_parent(feature, **kwargs):
         # TO DO: some kind of 'ping' to make sure the server is actually
         # there... (20151221/thisisaaronland)
         
-        # print "%s : %s,%s" % (parent, lat, lon)
+        logging.debug("reverse geocode for %s w/ %s,%s" % (parent, lat, lon))
 
         try:
             rsp = pip.reverse_geocode(parent, lat, lon)
