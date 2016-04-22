@@ -32,6 +32,9 @@ def reverse_geocoordinates(feature):
 
 def whereami(feature, **kwargs):
 
+    raise Exception, "Please finish me"
+
+    """
     lat, lon = reverse_geocoordinates(feature)    
 
     props = feature['properties']
@@ -62,6 +65,7 @@ def whereami(feature, **kwargs):
             break
 
         pass
+    """
 
 def append_hierarchy_and_parent_pip(feature, **kwargs):
     return append_hierarchy_and_parent(feature, **kwargs)
