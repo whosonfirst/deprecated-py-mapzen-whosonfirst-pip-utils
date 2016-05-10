@@ -31,44 +31,12 @@ def reverse_geocoordinates(feature):
 # test with 18.48361, -77.53057
 
 def whereami(feature, **kwargs):
-
     raise Exception, "Please finish me"
-
-    """
-    lat, lon = reverse_geocoordinates(feature)    
-
-    props = feature['properties']
-    placetype = props['wof:placetype']
-
-    # see also : https://github.com/whosonfirst/go-whosonfirst-pip#wof-pip-server
-    pip = mapzen.whosonfirst.pip.proxy()
-
-    pt = mapzen.whosonfirst.placetypes.placetype(placetype)
-
-    for ancestor in pt.ancestors():
-
-        ancestor = str(ancestor)
-
-        # TO DO: some kind of 'ping' to make sure the server is actually
-        # there... (20151221/thisisaaronland)
-        
-        # print "%s : %s,%s" % (parent, lat, lon)
-
-        try:
-            rsp = pip.reverse_geocode(ancestor, lat, lon)
-        except Exception, e:
-            logging.warning("failed to reverse geocode %s @%s,%s" % (parent, lat, lon))
-            continue
-
-        if len(rsp):
-            _rsp = rsp
-            break
-
-        pass
-    """
 
 def append_hierarchy_and_parent_pip(feature, **kwargs):
     return append_hierarchy_and_parent(feature, **kwargs)
+
+# https://github.com/whosonfirst/py-mapzen-whosonfirst-pip-utils/blob/f1ec12d3ffefd35768473aebb5e6d3d19e8d5172/mapzen/whosonfirst/pip/utils/__init__.py
 
 def append_hierarchy_and_parent(feature, **kwargs):
 
@@ -106,9 +74,14 @@ def append_hierarchy_and_parent(feature, **kwargs):
 
     wofid = props.get('wof:id', None)
 
+    data_root = kwargs.get('data_root', '')
+    
     for r in _rsp:
+        
         id = r['Id']
-        pf = mapzen.whosonfirst.utils.load(kwargs.get('data_root', ''), id)
+
+        pf = mapzen.whosonfirst.utils.load(data_root, id)
+
         pp = pf['properties']
         ph = pp['wof:hierarchy']
             
@@ -117,8 +90,6 @@ def append_hierarchy_and_parent(feature, **kwargs):
             if wofid:
                 h[ "%s_id" % placetype ] = wofid
 
-            # k = "%s_id" % placetype
-            # h[k] = wofid
             _hiers.append(h)
 
     parent_id = -1
