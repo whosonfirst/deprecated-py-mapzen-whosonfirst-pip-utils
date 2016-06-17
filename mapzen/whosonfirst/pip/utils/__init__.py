@@ -97,7 +97,7 @@ def append_hierarchy_and_parent(feature, **kwargs):
         try:
             rsp = pip.reverse_geocode(parent, lat, lon)
         except Exception, e:
-            logging.warning("failed to reverse geocode %s @%s,%s" % (parent, lat, lon))
+            logging.debug("failed to reverse geocode %s @%s,%s" % (parent, lat, lon))
             continue
 
         if len(rsp):
@@ -124,9 +124,9 @@ def append_hierarchy_and_parent(feature, **kwargs):
     parent_id = -1
 
     if len(_rsp) == 0:
-        logging.warning("Failed to reverse geocode any parents for %s, %s" % (lat, lon))
+        logging.debug("Failed to reverse geocode any parents for %s, %s" % (lat, lon))
     elif len(_rsp) > 1:  
-        logging.warning("Multiple reverse geocoding possibilities %s, %s" % (lat, lon))
+        logging.debug("Multiple reverse geocoding possibilities %s, %s" % (lat, lon))
     else:
         parent_id = _rsp[0]['Id']
 
