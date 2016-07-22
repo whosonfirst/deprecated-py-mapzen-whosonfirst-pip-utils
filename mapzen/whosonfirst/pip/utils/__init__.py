@@ -94,6 +94,7 @@ def append_hierarchy_and_parent(feature, **kwargs):
         
         logging.debug("reverse geocode for %s w/ %s,%s" % (parent, lat, lon))
 
+        print "reverse geocode for %s w/ %s,%s" % (parent, lat, lon)
         try:
             rsp = pip.reverse_geocode(parent, lat, lon)
         except Exception, e:
@@ -106,6 +107,51 @@ def append_hierarchy_and_parent(feature, **kwargs):
 
     wofid = props.get('wof:id', None)
 
+    possible = {}
+    superseded = {}
+
+    for r in _rsp:
+
+        _id = r['Id']
+
+        _feature = mapzen.whosonfirst.utils.load(kwargs.get('data_root', ''), _id)
+        _props = _feature['properties']
+        _superseded = _props['wof:superseded_by']
+
+        if len(_superseded) == 0:
+            possible[ _id ] = _feature
+            continue
+
+        # see this - there are two problems: 
+        # 1. we are not checking for further superseded by
+        # 2. we don't know whether the new record contains the point
+        # 3. infinite loops
+
+        for _sid in _superseded:
+            _feature = mapzen.whosonfirst.utils.load(kwargs.get('data_root', ''), _sid)
+            possible[ _sid ] = _feature
+
+    import pprint
+
+    print "superseded list"
+    print pprint.pformat(superseded)
+
+    print "possible results"
+    print pprint.pformat(possible.keys())
+
+    for _id, _superseded_by in superseded.items():
+
+        for _sid in _superseded_by:
+
+            print "%s has been superseded by %s - is it part of the result set" % (_id, _sid)
+            if possible.has_key(_sid):
+                print "YES"
+                del(possible[_id])
+                break
+
+    print "possible results (after)"
+    print pprint.pformat(possible.keys())
+
     for r in _rsp:
         id = r['Id']
         pf = mapzen.whosonfirst.utils.load(kwargs.get('data_root', ''), id)
@@ -117,8 +163,6 @@ def append_hierarchy_and_parent(feature, **kwargs):
             if wofid:
                 h[ "%s_id" % placetype ] = wofid
 
-            # k = "%s_id" % placetype
-            # h[k] = wofid
             _hiers.append(h)
 
     parent_id = -1
