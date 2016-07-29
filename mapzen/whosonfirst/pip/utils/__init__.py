@@ -61,7 +61,7 @@ def get_reverse_geocoded(lat, lon, placetype):
         # print "%s : %s,%s" % (parent, lat, lon)
 
         try:
-            rsp = pip.reverse_geocode(lat, lon, parent)
+            rsp = pip.reverse_geocode(lat, lon, placetype=parent)
         except Exception, e:
             logging.warning("failed to reverse geocode %s @%s,%s" % (parent, lat, lon))
             continue
