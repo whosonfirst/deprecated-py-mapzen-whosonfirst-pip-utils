@@ -118,7 +118,7 @@ def append_hierarchy_and_parent(feature, **kwargs):
 
         if len(ph) == 0:
 
-            logging.debug("parent (%s) returned an empty hierarchy so making a truncated mock" % id)
+            logging.warning("parent (%s) returned an empty hierarchy so making a truncated mock" % id)
 
             pt = pp['wof:placetype']
             pt = "%s_id" % pt
