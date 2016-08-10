@@ -85,7 +85,11 @@ def append_hierarchy_and_parent(feature, **kwargs):
     _hiers = []
     _rsp = []
     
-    for parent in pt.parents():
+    parents = pt.parents()
+
+    logging.debug("feature is a %s, parents are %s" % (placetype, parents))
+
+    for parent in parents:
         
         parent = str(parent)
 
@@ -111,7 +115,15 @@ def append_hierarchy_and_parent(feature, **kwargs):
         pf = mapzen.whosonfirst.utils.load(kwargs.get('data_root', ''), id)
         pp = pf['properties']
         ph = pp['wof:hierarchy']
-            
+
+        if len(ph) == 0:
+
+            logging.debug("parent (%s) returned an empty hierarchy so making a truncated mock" % id)
+
+            pt = pp['wof:placetype']
+            pt = "%s_id" % pt
+            ph = [ {pt: id} ]
+
         for h in ph:
 
             if wofid:
