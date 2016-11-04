@@ -1,5 +1,5 @@
 # https://pythonhosted.org/setuptools/setuptools.html#namespace-packages
-__import__('pkg_resources').declare_namespace(__name__)
+# __import__('pkg_resources').declare_namespace(__name__)
 
 import mapzen.whosonfirst.pip
 import mapzen.whosonfirst.placetypes

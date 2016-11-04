@@ -19,7 +19,7 @@ version = open("VERSION").read()
 
 setup(
     name='mapzen.whosonfirst.pip.utils',
-    namespace_packages=['mapzen', 'mapzen.whosonfirst', 'mapzen.whosonfirst.pip', 'mapzen.whosonfirst.pip.utils'],
+    namespace_packages=['mapzen', 'mapzen.whosonfirst'],
     version=version,
     description='Python utility methods for making Who\'s On First documents play nicely with the go-whosonfirst-pip server',
     author='Mapzen',
