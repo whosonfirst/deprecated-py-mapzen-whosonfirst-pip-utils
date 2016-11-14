@@ -41,10 +41,14 @@ def append_hierarchy_and_parent(feature, **kwargs):
 
     return True
 
-def get_reverse_geocoded(lat, lon, placetype):
+def get_reverse_geocoded(lat, lon, placetype, **kwargs):
+
+    kw_hostname = kwargs.get('hostname', 'pip.mapzen.com')
+    kw_scheme = kwargs.get('scheme', 'https')
+    kw_port = kwargs.get('port', 443)
 
     # see also : https://github.com/whosonfirst/go-whosonfirst-pip#wof-pip-server
-    pip = mapzen.whosonfirst.pip.server(hostname='pip.mapzen.com', scheme='https', port=443)
+    pip = mapzen.whosonfirst.pip.server(hostname=kw_hostname, scheme=kw_scheme, port=kw_port)
 
     pt = mapzen.whosonfirst.placetypes.placetype(placetype)
 
@@ -91,9 +95,11 @@ def get_hierarchy(reverse_geocoded, data_endpoint):
 
     for r in reverse_geocoded:
         id = r['Id']
-        #pf = mapzen.whosonfirst.utils.load(kwargs.get('data_root', ''), id)
-        rsp = requests.get(data_endpoint + id2relpath(id))
-        pf = json.loads(rsp.content)
+        if data_endpoint.startswith('http'):
+            rsp = requests.get(data_endpoint + id2relpath(id))
+            pf = json.loads(rsp.content)
+        else:
+            pf = mapzen.whosonfirst.utils.load(data_endpoint, id)
         pp = pf['properties']
         ph = pp['wof:hierarchy']
         placetype = pp['wof:placetype']
