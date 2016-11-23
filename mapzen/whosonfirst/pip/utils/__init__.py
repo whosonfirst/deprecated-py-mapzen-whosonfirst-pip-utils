@@ -55,6 +55,10 @@ def get_reverse_geocoded(lat, lon, placetype, **kwargs):
     _hiers = []
     _rsp = []
 
+    rsp = pip.reverse_geocode(lat, lon, placetype=placetype)
+    if len(rsp):
+        return rsp
+
     for parent in pt.parents():
 
         parent = str(parent)
